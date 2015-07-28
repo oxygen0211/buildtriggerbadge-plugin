@@ -2,11 +2,12 @@ package org.jenkinsci.plugins.buildtriggerbadge;
 
 import hudson.model.BuildBadgeAction;
 import hudson.model.Cause;
+import hudson.model.Cause.UpstreamCause;
 import jenkins.model.Jenkins;
 
 /**
  * Badge action of the build trigger cause.
- * 
+ *
  * @author Michael Pailloncy
  */
 public class BuildTriggerBadgeAction implements BuildBadgeAction {
@@ -34,6 +35,22 @@ public class BuildTriggerBadgeAction implements BuildBadgeAction {
 		return null;
 	}
 
+	public boolean isUpstreamTriggered()
+	{
+		return cause instanceof UpstreamCause;
+	}
+
+	public String getUpstreamUrl()
+	{
+		String url = "";
+		if (cause instanceof UpstreamCause)
+		{
+			UpstreamCause upstreamCause = (UpstreamCause) cause;
+			url = upstreamCause.getUpstreamUrl();
+		}
+		return url;
+	}
+
 	public String getDisplayName() {
 		return "Trigger " + cause.getClass().getSimpleName() + " : " + getTooltip();
 	}
@@ -44,7 +61,7 @@ public class BuildTriggerBadgeAction implements BuildBadgeAction {
 
 	/**
 	 * Returns the icon to be used as a badge for the given cause that triggered the associated build.
-	 * 
+	 *
 	 * @return the associated icon for the given cause.
 	 */
 	public String getIcon() {
